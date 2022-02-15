@@ -1,9 +1,12 @@
+using kr.bbon.AspNetCore;
+using kr.bbon.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Example.App.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route(DefaultValues.RouteTemplate)]
+[Area(DefaultValues.AreaName)]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
@@ -21,8 +24,8 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
-        
-        var result= Enumerable.Range(1, 5).Select(index => new WeatherForecast
+
+        var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.Now.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
@@ -33,5 +36,17 @@ public class WeatherForecastController : ControllerBase
         _logger.LogInformation("Result is {@result}", result);
 
         return result;
+    }
+
+    [HttpPost("400")]
+    public IActionResult BadRequest()
+    {
+        throw new ApiException(StatusCodes.Status400BadRequest, "CASE #400: HTTP 400 Response");
+    }
+
+    [HttpDelete("500")]
+    public IActionResult InternalServerError()
+    {
+        throw new ApiException(StatusCodes.Status500InternalServerError, "CASE #500: HTTP 500 Response");
     }
 }
