@@ -5,6 +5,8 @@ using Serilog;
 using Serilog.Configuration;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -14,6 +16,12 @@ Log.Logger = new LoggerConfiguration()
 Serilog.Debugging.SelfLog.Enable(message => Debug.WriteLine(message));
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOptions<ApplicationInsightsServiceOptions>()
+    .Configure<IConfiguration>((options, configuration) =>
+    {
+        configuration.GetSection("ApplicationInsights").Bind(options);
+    });
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
@@ -30,12 +38,7 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 
     if (!string.IsNullOrEmpty(telemetryConfiguration.InstrumentationKey))
     {
-        loggerConfiguration
-        .WriteTo.AzureApplicationInsights(telemetryConfiguration.InstrumentationKey, options =>
-        {
-            options.Exception.IncludeProperties = true;
-            options.Exception.PropertyFormat = "CustomException.{0}";
-        });
+        loggerConfiguration.WriteTo.ApplicationInsights(new CustomPropertiesTelemetryConverter());
     }
 
 })

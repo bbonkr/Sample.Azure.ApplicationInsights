@@ -4,8 +4,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.Formatters;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 namespace Example.App;
 
