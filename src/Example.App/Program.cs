@@ -25,6 +25,9 @@ builder.Services.AddOptions<ApplicationInsightsServiceOptions>()
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
+    ApplicationInsightsServiceOptions applicationInsightsServiceOptions = new();
+    context.Configuration.GetSection("ApplicationInsights").Bind(applicationInsightsServiceOptions);
+
     var telemetryConfiguration = services.GetRequiredService<TelemetryConfiguration>();
 
     loggerConfiguration
@@ -38,7 +41,12 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 
     if (!string.IsNullOrEmpty(telemetryConfiguration.InstrumentationKey))
     {
-        loggerConfiguration.WriteTo.ApplicationInsights(new CustomPropertiesTelemetryConverter());
+        //loggerConfiguration.WriteTo.ApplicationInsights(new CustomPropertiesTelemetryConverter());
+        loggerConfiguration.WriteTo.ApplicationInsights(
+            applicationInsightsServiceOptions.ConnectionString,
+            //new CustomPropertiesTelemetryConverter()
+            new TraceTelemetryConverter()
+            );
     }
 
 })
