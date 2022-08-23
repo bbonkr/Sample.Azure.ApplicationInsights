@@ -8,6 +8,7 @@ using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 namespace Example.App;
 
+[Obsolete]
 public class CustomPropertiesTelemetryConverter : TraceTelemetryConverter // EventTelemetryConverter
 {
     public override IEnumerable<ITelemetry> Convert(LogEvent logEvent, IFormatProvider formatProvider)
@@ -24,7 +25,6 @@ public class CustomPropertiesTelemetryConverter : TraceTelemetryConverter // Eve
 
         foreach (var telemetry in base.Convert(customLogEvent, formatProvider))
         {
-
             yield return telemetry;
         }
     }
